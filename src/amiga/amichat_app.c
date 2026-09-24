@@ -4,6 +4,7 @@
 #include "amichat_worker_amiga.h"
 #ifdef __AMIGA__
 #include <exec/types.h>
+#include <exec/tasks.h>
 #include <proto/exec.h>
 #include <stdlib.h>
 struct AmiChatAmigaApp { AmiChatSession *session; AmiChatARexxPort *arexx; AmiChatAmigaWorker *worker; AmiChatAmigaGUI *gui; int quit; };
