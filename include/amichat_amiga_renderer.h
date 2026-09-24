@@ -10,6 +10,8 @@ void AmiChat_AmigaRendererDestroy(AmiChatAmigaRenderer *renderer);
 void AmiChat_AmigaRendererSetTranscript(AmiChatAmigaRenderer *renderer,const AmiChatTranscript *transcript);
 void AmiChat_AmigaRendererDraw(AmiChatAmigaRenderer *renderer,void *window);
 void AmiChat_AmigaRendererScroll(AmiChatAmigaRenderer *renderer,int lines);
+void AmiChat_AmigaRendererFollow(AmiChatAmigaRenderer *renderer,int enabled);
+int AmiChat_AmigaRendererFollowing(const AmiChatAmigaRenderer *renderer);
 #ifdef __cplusplus
 }
 #endif
