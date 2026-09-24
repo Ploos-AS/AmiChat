@@ -14,6 +14,7 @@ struct AmiChatAmigaWorker {
     AmiChatSession *session;
     struct MsgPort *events;
     struct MsgPort *start;
+    struct MsgPort *start_reply;
     struct Task *task;
     AmiChatWorker *core;
     volatile int cancel;
@@ -36,38 +37,44 @@ static void worker_entry(void){
     WaitPort(start);m=(StartMsg*)GetMsg(start);if(!m)return;w=m->worker;ReplyMsg((struct Message*)m);if(!w)return;
     w->core=AmiChat_WorkerCreate(w->session,emit,w);
     if(w->core){
+        AmiChatResult result;
         if(w->cancel)AmiChat_WorkerCancel(w->core);
-        AmiChat_WorkerSend(w->core,w->prompt);
+        result=AmiChat_WorkerSend(w->core,w->prompt);
+        w->state=AmiChat_WorkerState(w->core);
+        (void)result;
         AmiChat_WorkerDestroy(w->core);w->core=0;
     }else{
         e.type=AMICHAT_WORKER_ERROR;e.data=0;e.size=0;e.result=AMICHAT_ERR_NOMEM;emit(&e,w);
     }
-    if(w->core)w->state=AmiChat_WorkerState(w->core);w->task=0;w->busy=0;
+    w->task=0;w->busy=0;
 }
 
 AmiChatAmigaWorker *AmiChat_AmigaWorkerCreate(AmiChatSession*s){
     AmiChatAmigaWorker*w;if(!s)return 0;w=(AmiChatAmigaWorker*)calloc(1,sizeof(*w));if(!w)return 0;
-    w->session=s;w->state=AMICHAT_WORKER_IDLE;w->events=CreateMsgPort();w->start=CreateMsgPort();
-    if(!w->events||!w->start){if(w->events)DeleteMsgPort(w->events);if(w->start)DeleteMsgPort(w->start);free(w);return 0;}return w;
+    w->session=s;w->state=AMICHAT_WORKER_IDLE;w->events=CreateMsgPort();w->start=CreateMsgPort();w->start_reply=CreateMsgPort();
+    if(!w->events||!w->start||!w->start_reply){if(w->events)DeleteMsgPort(w->events);if(w->start)DeleteMsgPort(w->start);if(w->start_reply)DeleteMsgPort(w->start_reply);free(w);return 0;}return w;
 }
 
 void AmiChat_AmigaWorkerDestroy(AmiChatAmigaWorker*w){
     WorkerMsg*m;if(!w)return;AmiChat_AmigaWorkerCancel(w);while(w->busy)Delay(1);
     while((m=(WorkerMsg*)GetMsg(w->events))!=0)FreeMem(m,m->msg.mn_Length);
-    DeleteMsgPort(w->start);DeleteMsgPort(w->events);free(w->prompt);free(w);
+    DeleteMsgPort(w->start_reply);DeleteMsgPort(w->start);DeleteMsgPort(w->events);free(w->prompt);free(w);
 }
 
 AmiChatResult AmiChat_AmigaWorkerSend(AmiChatAmigaWorker*w,const char*p){
     size_t n;StartMsg*m;if(!w||!p||!*p)return AMICHAT_ERR_INVALID_ARGUMENT;if(w->busy)return AMICHAT_ERR_UNSUPPORTED;
     n=strlen(p)+1;free(w->prompt);w->prompt=(char*)malloc(n);if(!w->prompt)return AMICHAT_ERR_NOMEM;memcpy(w->prompt,p,n);
-    w->cancel=0;w->busy=1;w->state=AMICHAT_WORKER_GENERATING;
-    w->task=CreateTask((STRPTR)"AmiChat worker",0,worker_entry,32768);
-    if(!w->task){w->busy=0;return AMICHAT_ERR_NOMEM;}
-    w->task->tc_UserData=w->start;
     m=(StartMsg*)AllocMem(sizeof(*m),MEMF_PUBLIC|MEMF_CLEAR);
-    if(!m){w->cancel=1;while(w->busy)Delay(1);return AMICHAT_ERR_NOMEM;}
-    m->msg.mn_ReplyPort=w->start;m->msg.mn_Length=sizeof(*m);m->worker=w;PutMsg(w->start,(struct Message*)m);
-    WaitPort(w->start);GetMsg(w->start);FreeMem(m,sizeof(*m));
+    if(!m)return AMICHAT_ERR_NOMEM;
+    m->msg.mn_ReplyPort=w->start_reply;m->msg.mn_Length=sizeof(*m);m->worker=w;
+    w->cancel=0;w->busy=1;w->state=AMICHAT_WORKER_GENERATING;
+    Forbid();
+    w->task=CreateTask((STRPTR)"AmiChat worker",0,worker_entry,32768);
+    if(w->task)w->task->tc_UserData=w->start;
+    Permit();
+    if(!w->task){w->busy=0;w->state=AMICHAT_WORKER_ERROR_STATE;FreeMem(m,sizeof(*m));return AMICHAT_ERR_NOMEM;}
+    PutMsg(w->start,(struct Message*)m);
+    WaitPort(w->start_reply);GetMsg(w->start_reply);FreeMem(m,sizeof(*m));
     return AMICHAT_OK;
 }
 
