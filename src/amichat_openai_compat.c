@@ -1,100 +1,15 @@
 #include "amichat_openai_compat.h"
+#include "amichat_json.h"
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct OpenAICompatState {
-    AmiChatTransport *transport;
-    char *base_url;
-    char *api_key;
-    char *organization;
-} OpenAICompatState;
-
-static char *dup_string(const char *s)
-{
-    size_t n;
-    char *p;
-    if (!s) return NULL;
-    n = strlen(s) + 1;
-    p = (char *)malloc(n);
-    if (p) memcpy(p, s, n);
-    return p;
-}
-
-static void free_state(OpenAICompatState *s)
-{
-    if (!s) return;
-    free(s->base_url);
-    free(s->api_key);
-    free(s->organization);
-    free(s);
-}
-
-static AmiChatResult configure(AmiChatProvider *provider, const char *config)
-{
-    (void)provider;
-    (void)config;
-    return AMICHAT_ERR_UNSUPPORTED;
-}
-
-static AmiChatResult list_models(AmiChatProvider *provider)
-{
-    (void)provider;
-    return AMICHAT_ERR_UNSUPPORTED;
-}
-
-static AmiChatResult send_message(AmiChatProvider *provider,
-                                  AmiChatConversation *conversation)
-{
-    (void)provider;
-    (void)conversation;
-    return AMICHAT_ERR_UNSUPPORTED;
-}
-
-static AmiChatResult cancel(AmiChatProvider *provider)
-{
-    (void)provider;
-    return AMICHAT_ERR_UNSUPPORTED;
-}
-
-static void destroy(AmiChatProvider *provider)
-{
-    (void)provider;
-}
-
-static const AmiChatProviderOps openai_compat_ops = {
-    configure,
-    list_models,
-    send_message,
-    cancel,
-    destroy
-};
-
-AmiChatResult AmiChat_OpenAICompat_Init(
-    AmiChatProvider *provider,
-    AmiChatTransport *transport,
-    const AmiChatOpenAICompatConfig *config)
-{
-    OpenAICompatState *state;
-
-    if (!provider || !transport || !config || !config->base_url)
-        return AMICHAT_ERR_INVALID_ARGUMENT;
-
-    state = (OpenAICompatState *)calloc(1, sizeof(*state));
-    if (!state) return AMICHAT_ERR_NOMEM;
-
-    state->transport = transport;
-    state->base_url = dup_string(config->base_url);
-    state->api_key = dup_string(config->api_key);
-    state->organization = dup_string(config->organization);
-
-    if (!state->base_url ||
-        (config->api_key && !state->api_key) ||
-        (config->organization && !state->organization)) {
-        free_state(state);
-        return AMICHAT_ERR_NOMEM;
-    }
-
-    provider->ops = &openai_compat_ops;
-    provider->userdata = state;
-    return AMICHAT_OK;
-}
+typedef struct OpenAICompatState { AmiChatTransport *transport; char *base_url; char *api_key; char *organization; } OpenAICompatState;
+static char*dupstr(const char*s){size_t n;char*p;if(!s)return 0;n=strlen(s)+1;p=(char*)malloc(n);if(p)memcpy(p,s,n);return p;}
+static void freestate(OpenAICompatState*s){if(!s)return;free(s->base_url);free(s->api_key);free(s->organization);free(s);}
+static AmiChatResult configure(AmiChatProvider*p,const char*c){(void)p;(void)c;return AMICHAT_ERR_UNSUPPORTED;}
+static AmiChatResult models(AmiChatProvider*p){(void)p;return AMICHAT_ERR_UNSUPPORTED;}
+static AmiChatResult sendfn(AmiChatProvider*p,AmiChatConversation*c){(void)p;(void)c;return AMICHAT_ERR_UNSUPPORTED;}
+static AmiChatResult cancel(AmiChatProvider*p){(void)p;return AMICHAT_ERR_UNSUPPORTED;}
+static void destroy(AmiChatProvider*p){if(p){freestate((OpenAICompatState*)p->userdata);p->userdata=0;}}
+static const AmiChatProviderOps ops={configure,models,sendfn,cancel,destroy};
+AmiChatResult AmiChat_OpenAICompat_Init(AmiChatProvider*p,AmiChatTransport*t,const AmiChatOpenAICompatConfig*c){OpenAICompatState*s;if(!p||!t||!c||!c->base_url)return AMICHAT_ERR_INVALID_ARGUMENT;s=(OpenAICompatState*)calloc(1,sizeof(*s));if(!s)return AMICHAT_ERR_NOMEM;s->transport=t;s->base_url=dupstr(c->base_url);s->api_key=dupstr(c->api_key);s->organization=dupstr(c->organization);if(!s->base_url||(c->api_key&&!s->api_key)||(c->organization&&!s->organization)){freestate(s);return AMICHAT_ERR_NOMEM;}p->ops=&ops;p->userdata=s;return AMICHAT_OK;}
+AmiChatResult AmiChat_OpenAICompat_Chat(AmiChatProvider*p,const AmiChatRequest*r,AmiChatStream*s){OpenAICompatState*st;char body[4096],headers[1024],content[2048];size_t n=0;AmiChatTransportRequest tr;AmiChatTransportResponse tp;AmiChatResult e;if(!p||!r)return AMICHAT_ERR_INVALID_ARGUMENT;e=AmiChat_RequestValidate(r);if(e!=AMICHAT_OK)return e;st=(OpenAICompatState*)p->userdata;if(!st)return AMICHAT_ERR_INVALID_ARGUMENT;if(AmiChat_JSONAppendString(body,sizeof(body),&n,"model")!=AMICHAT_OK)return AMICHAT_ERR_NOMEM;if(n+1>=sizeof(body))return AMICHAT_ERR_NOMEM;body[n++]=':';body[n]='\0';if(AmiChat_JSONAppendString(body,sizeof(body),&n,r->model)!=AMICHAT_OK)return AMICHAT_ERR_NOMEM;{const char tail[]=",\"messages\":[{\"role\":\"user\",\"content\":";size_t tl=sizeof(tail)-1;if(n+tl>=sizeof(body))return AMICHAT_ERR_NOMEM;memcpy(body+n,tail,tl);n+=tl;body[n]='\0';}if(AmiChat_JSONAppendString(body,sizeof(body),&n,r->user_prompt)!=AMICHAT_OK)return AMICHAT_ERR_NOMEM;if(n+3>=sizeof(body))return AMICHAT_ERR_NOMEM;memcpy(body+n,"}]}",3);n+=3;body[n]='\0';strcpy(headers,"Content-Type: application/json\r\n");if(st->api_key){strcat(headers,"Authorization: Bearer ");strcat(headers,st->api_key);strcat(headers,"\r\n");}if(st->organization){strcat(headers,"OpenAI-Organization: ");strcat(headers,st->organization);strcat(headers,"\r\n");}tr.method="POST";tr.url=st->base_url;tr.headers=headers;tr.body=body;e=AmiChat_TransportRequest(st->transport,&tr,&tp);if(e!=AMICHAT_OK)return e;if(tp.status_code<200||tp.status_code>=300||!tp.body)return AMICHAT_ERR_PROVIDER;if(!AmiChat_JSONFindString(tp.body,"content",content,sizeof(content)))return AMICHAT_ERR_PROVIDER;return AmiChat_StreamEmit(s,content,strlen(content),1);}
