@@ -41,13 +41,14 @@ amichat_transport.o: $(TRANSPORT) include/amichat_transport.h
 amichat_openai_compat.o: $(PROVIDER) include/amichat_openai_compat.h include/amichat_provider.h include/amichat_transport.h
 	$(CC) $(CFLAGS) -c $(PROVIDER) -o $@
 
-test: test_core test_transport test_json test_stream test_request test_sse test_sse test_stream test_request
+test: test_core test_transport test_json test_stream test_request test_sse test_openai_stream test_stream test_request test_sse test_openai_stream
 	./test_core
 	./test_transport
 	./test_json
 	./test_stream
 	./test_request
 	./test_sse
+	./test_openai_stream
 
 test_core: $(CORE) test/test_core.c include/amichat.h
 	$(CC) $(CFLAGS) $(CORE) test/test_core.c -o $@
@@ -67,5 +68,8 @@ test_request: $(REQUEST) test/test_request.c include/amichat.h include/amichat_r
 test_sse: $(SSE) $(STREAM) $(JSON) test/test_sse.c include/amichat_sse.h
 	$(CC) $(CFLAGS) $(SSE) $(STREAM) $(JSON) test/test_sse.c -o $@
 
+test_openai_stream: $(PROVIDER) $(TRANSPORT) $(REQUEST) $(SSE) $(STREAM) $(JSON) test/test_openai_stream.c
+	$(CC) $(CFLAGS) $(PROVIDER) $(TRANSPORT) $(REQUEST) $(SSE) $(STREAM) $(JSON) test/test_openai_stream.c -o $@
+
 clean:
-	rm -f amichat.o amichat_message.o amichat_json.o amichat_transport.o amichat_openai_compat.o libamichat.a test_core test_transport test_json
+	rm -f amichat.o amichat_message.o amichat_json.o amichat_stream.o amichat_request.o amichat_sse.o amichat_transport.o amichat_openai_compat.o libamichat.a test_core test_transport test_json
