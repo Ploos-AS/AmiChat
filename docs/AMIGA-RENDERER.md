@@ -17,3 +17,8 @@ The GUI now reserves a native vertical GadTools scroller and accepts raw cursor 
 ## Viewport metrics
 
 The renderer now calculates total wrapped visual lines and visible viewport lines using the active RastPort font and current window width. The GadTools scroller is synchronized from those metrics. Follow mode places the viewport at the live edge as streamed text grows, while manual scroller movement sets an explicit top visual line.
+
+
+## Wrapped-line viewport
+
+Rendering and line counting now share the same visual-line iterator. The viewport offset is measured in wrapped display lines rather than physical newline-delimited lines, and drawing no longer mutates the stored top-line position. The text area also reserves space for the vertical scroller so wrapped text is not painted underneath it.
