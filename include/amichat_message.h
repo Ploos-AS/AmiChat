@@ -1,5 +1,6 @@
 #ifndef AMICHAT_MESSAGE_H
 #define AMICHAT_MESSAGE_H
+#include <stddef.h>
 #include "amichat.h"
 #ifdef __cplusplus
 extern "C" {
