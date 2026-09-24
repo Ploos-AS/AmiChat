@@ -12,12 +12,13 @@ PROVIDER = src/amichat_openai_compat.c
 REGISTRY = src/amichat_registry.c
 FACTORY = src/amichat_provider_factory.c
 CONFIG = src/amichat_config.c
+SESSION = src/amichat_session.c
 
 .PHONY: all test clean
 
 all: libamichat.a
 
-libamichat.a: amichat.o amichat_message.o amichat_json.o amichat_stream.o amichat_request.o amichat_sse.o amichat_transport.o amichat_openai_compat.o amichat_registry.o amichat_provider_factory.o amichat_config.o
+libamichat.a: amichat.o amichat_message.o amichat_json.o amichat_stream.o amichat_request.o amichat_sse.o amichat_transport.o amichat_openai_compat.o amichat_registry.o amichat_provider_factory.o amichat_config.o amichat_session.o
 	ar rcs $@ $^
 
 amichat.o: $(CORE) include/amichat.h
@@ -41,6 +42,9 @@ amichat_sse.o: $(SSE) include/amichat_sse.h include/amichat_stream.h include/ami
 amichat_transport.o: $(TRANSPORT) include/amichat_transport.h
 	$(CC) $(CFLAGS) -c $(TRANSPORT) -o $@
 
+amichat_session.o: $(SESSION) include/amichat_session.h include/amichat_provider_factory.h
+	$(CC) $(CFLAGS) -c $(SESSION) -o $@
+
 amichat_config.o: $(CONFIG) include/amichat_config.h
 	$(CC) $(CFLAGS) -c $(CONFIG) -o $@
 
@@ -53,7 +57,7 @@ amichat_registry.o: $(REGISTRY) include/amichat_registry.h include/amichat_provi
 amichat_openai_compat.o: $(PROVIDER) include/amichat_openai_compat.h include/amichat_provider.h include/amichat_transport.h
 	$(CC) $(CFLAGS) -c $(PROVIDER) -o $@
 
-test: test_core test_transport test_json test_stream test_request test_sse test_openai_stream test_conversation test_openai_history test_reply_capture test_registry test_provider_factory test_config test_stream test_request test_sse test_openai_stream
+test: test_core test_transport test_json test_stream test_request test_sse test_openai_stream test_conversation test_openai_history test_reply_capture test_registry test_provider_factory test_config test_session test_stream test_request test_sse test_openai_stream
 	./test_core
 	./test_transport
 	./test_json
@@ -67,6 +71,7 @@ test: test_core test_transport test_json test_stream test_request test_sse test_
 	./test_registry
 	./test_provider_factory
 	./test_config
+	./test_session
 
 test_core: $(CORE) test/test_core.c include/amichat.h
 	$(CC) $(CFLAGS) $(CORE) test/test_core.c -o $@
@@ -106,6 +111,9 @@ test_provider_factory: $(FACTORY) $(REGISTRY) $(PROVIDER) $(TRANSPORT) $(REQUEST
 
 test_config: $(CONFIG) test/test_config.c include/amichat_config.h
 	$(CC) $(CFLAGS) $(CONFIG) test/test_config.c -o $@
+
+test_session: $(SESSION) $(FACTORY) $(REGISTRY) $(PROVIDER) $(CONFIG) $(CORE) $(MESSAGE) $(TRANSPORT) $(REQUEST) $(SSE) $(STREAM) $(JSON) test/test_session.c
+	$(CC) $(CFLAGS) $(SESSION) $(FACTORY) $(REGISTRY) $(PROVIDER) $(CONFIG) $(CORE) $(MESSAGE) $(TRANSPORT) $(REQUEST) $(SSE) $(STREAM) $(JSON) test/test_session.c -o $@
 
 clean:
 	rm -f amichat.o amichat_message.o amichat_json.o amichat_stream.o amichat_request.o amichat_sse.o amichat_transport.o amichat_openai_compat.o libamichat.a test_core test_transport test_json
