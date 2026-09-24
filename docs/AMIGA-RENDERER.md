@@ -12,3 +12,8 @@ The next pass connects redraw to refresh/resize and streamed chunk events, then 
 ## Scroll interaction
 
 The GUI now reserves a native vertical GadTools scroller and accepts raw cursor up/down keys for transcript navigation. Manual upward navigation disables follow mode; returning to the live edge can re-enable it. The next refinement will calculate wrapped visual-line totals and bind the scroller pot/body precisely to the viewport rather than using placeholder range values.
+
+
+## Viewport metrics
+
+The renderer now calculates total wrapped visual lines and visible viewport lines using the active RastPort font and current window width. The GadTools scroller is synchronized from those metrics. Follow mode places the viewport at the live edge as streamed text grows, while manual scroller movement sets an explicit top visual line.
