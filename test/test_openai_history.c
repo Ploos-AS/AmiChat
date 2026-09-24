@@ -1,0 +1,7 @@
+#include "amichat_openai_compat.h"
+#include "amichat_provider.h"
+#include "amichat_message.h"
+#include <assert.h>
+#include <string.h>
+static AmiChatResult fake(AmiChatTransport*t,const AmiChatTransportRequest*r,AmiChatTransportResponse*p){(void)t;assert(strstr(r->body,"\"role\":\"system\"")!=0);assert(strstr(r->body,"Be concise.")!=0);assert(strstr(r->body,"\"role\":\"user\"")!=0);assert(strstr(r->body,"Hello")!=0);assert(strstr(r->body,"\"role\":\"assistant\"")!=0);assert(strstr(r->body,"Hi")!=0);p->status_code=200;p->body="{\"choices\":[{\"message\":{\"content\":\"ok\"}}]}";p->content_type="application/json";return AMICHAT_OK;}
+int main(void){static const AmiChatTransportOps ops={fake,0};AmiChatTransport t;AmiChatProvider p;AmiChatOpenAICompatConfig cfg;AmiChatContext*ctx;AmiChatConversation*c;t.ops=&ops;t.userdata=0;cfg.base_url="https://example.invalid/v1/chat/completions";cfg.api_key=0;cfg.organization=0;assert(AmiChat_OpenAICompat_Init(&p,&t,&cfg)==AMICHAT_OK);ctx=AmiChat_Create();c=AmiChat_NewConversation(ctx);assert(AmiChat_ConversationAppend(c,AmiChat_MessageCreate(AMICHAT_ROLE_SYSTEM,"Be concise."))==AMICHAT_OK);assert(AmiChat_ConversationAppend(c,AmiChat_MessageCreate(AMICHAT_ROLE_USER,"Hello"))==AMICHAT_OK);assert(AmiChat_ConversationAppend(c,AmiChat_MessageCreate(AMICHAT_ROLE_ASSISTANT,"Hi"))==AMICHAT_OK);assert(AmiChat_OpenAICompat_Conversation(&p,"test-model",c,0)==AMICHAT_OK);AmiChat_FreeConversation(c);AmiChat_Destroy(ctx);p.ops->destroy(&p);return 0;}
