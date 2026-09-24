@@ -1,5 +1,6 @@
 #ifndef AMICHAT_WORKER_H
 #define AMICHAT_WORKER_H
+#include <stddef.h>
 #include "amichat_session.h"
 #ifdef __cplusplus
 extern "C" {
