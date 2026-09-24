@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef enum AmiChatWorkerEventType { AMICHAT_WORKER_CHUNK=1,AMICHAT_WORKER_DONE,AMICHAT_WORKER_ERROR } AmiChatWorkerEventType;
+typedef enum AmiChatWorkerEventType { AMICHAT_WORKER_CHUNK=1,AMICHAT_WORKER_DONE,AMICHAT_WORKER_CANCELLED,AMICHAT_WORKER_ERROR } AmiChatWorkerEventType;
 typedef struct AmiChatWorkerEvent { AmiChatWorkerEventType type; const char *data; size_t size; AmiChatResult result; } AmiChatWorkerEvent;
 typedef void (*AmiChatWorkerEventFn)(const AmiChatWorkerEvent *event,void *userdata);
 typedef struct AmiChatWorker AmiChatWorker;
