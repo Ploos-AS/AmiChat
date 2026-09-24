@@ -18,7 +18,9 @@ static const char *next_visual_line(struct RastPort*rp,const char*s,WORD width,s
         len++;
     }
     if(s[len]&&s[len]!='\n'&&best)len=best;
-    if(!len)len=1;*n=len;s+=len;
+    if(!len)len=1;
+    *n=len;
+    s+=len;
     while(*s==' ')s++;
     if(*s=='\n')s++;
     return s;
@@ -38,7 +40,12 @@ void AmiChat_AmigaRendererSetTopLine(AmiChatAmigaRenderer*r,unsigned long line){
 void AmiChat_AmigaRendererDraw(AmiChatAmigaRenderer*r,void*wp){
     struct Window*w=(struct Window*)wp;struct RastPort*rp;const char*s,*next;size_t n;unsigned long skip;
     WORD left=10,top=18,right,bottom,y,lineh,width;
-    if(!r||!w||!w->RPort||!r->transcript)return;rp=w->RPort;right=w->Width-37;bottom=w->Height-65;lineh=rp->TxHeight+2;width=right-left;
+    if(!r||!w||!w->RPort||!r->transcript)return;
+    rp=w->RPort;
+    right=w->Width-37;
+    bottom=w->Height-65;
+    lineh=rp->TxHeight+2;
+    width=right-left;
     SetAPen(rp,0);RectFill(rp,left,top,right,bottom);SetAPen(rp,1);
     s=AmiChat_TranscriptText(r->transcript);skip=r->scroll;
     while(s&&*s&&skip){s=next_visual_line(rp,s,width,&n);skip--;}
