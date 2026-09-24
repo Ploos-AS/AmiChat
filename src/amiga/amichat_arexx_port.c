@@ -7,6 +7,7 @@
 #include <proto/rexxsyslib.h>
 #include <rexx/storage.h>
 #include <stdlib.h>
+#include <string.h>
 struct AmiChatARexxPort { struct MsgPort *port; AmiChatSession *session; };
 AmiChatARexxPort *AmiChat_ARexxPortOpen(AmiChatSession*s){AmiChatARexxPort*a;if(!s)return 0;a=(AmiChatARexxPort*)calloc(1,sizeof(*a));if(!a)return 0;a->port=CreatePort((STRPTR)AMICHAT_AREXX_PORT,0);if(!a->port){free(a);return 0;}a->session=s;return a;}
 void AmiChat_ARexxPortClose(AmiChatARexxPort*a){struct RexxMsg*m;if(!a)return;if(a->port){while((m=(struct RexxMsg*)GetMsg(a->port))!=0){m->rm_Result1=20;m->rm_Result2=0;ReplyMsg((struct Message*)m);}DeletePort(a->port);}free(a);}
