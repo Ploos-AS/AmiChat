@@ -29,7 +29,7 @@ void AmiChat_SSEInit(AmiChatSSEParser *p, AmiChatStream *s)
 
 AmiChatResult AmiChat_SSEFeed(AmiChatSSEParser *p, const char *d, size_t n)
 {
-    size_t i, consumed = 0;
+    size_t i, event_start = 0, consumed = 0;
     AmiChatResult r;
     if (!p || (!d && n))
         return AMICHAT_ERR_INVALID_ARGUMENT;
@@ -50,7 +50,7 @@ AmiChatResult AmiChat_SSEFeed(AmiChatSSEParser *p, const char *d, size_t n)
             continue;
         }
         end = i;
-        line = 0;
+        line = event_start;
         while (line < end) {
             size_t e = line;
             while (e < end && p->buffer[e] != '\n')
@@ -66,6 +66,7 @@ AmiChatResult AmiChat_SSEFeed(AmiChatSSEParser *p, const char *d, size_t n)
             line = e + 1;
         }
         consumed = i + 2;
+        event_start = consumed;
         i = consumed;
         if (p->done)
             break;
