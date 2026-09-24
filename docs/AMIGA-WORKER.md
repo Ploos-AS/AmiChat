@@ -14,3 +14,9 @@ No GUI code should call the network transport directly once this bridge is integ
 The temporary process-global `active_worker` handoff has been removed. Each worker task now receives its own bootstrap message through a dedicated Exec message port, with the port reference carried in the task's user data. The creator waits only for the bootstrap acknowledgement, not for network completion. This removes cross-job global state and makes task startup deterministic for the single-in-flight worker model.
 
 Cancellation now also reaches the live portable worker instance when it has been created, while an early cancellation flag covers the startup window.
+
+## Bootstrap safety
+
+The worker bootstrap uses separate request and reply message ports. The start message is allocated before task creation, and task creation plus `tc_UserData` initialization is protected by `Forbid()`/`Permit()` so the worker cannot observe an uninitialized bootstrap pointer. The parent waits only on the dedicated reply port.
+
+Native Amiga cross-build and emulator qualification are still required before this path is considered qualified.
