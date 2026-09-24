@@ -11,6 +11,7 @@ void AmiChat_AmigaWorkerDestroy(AmiChatAmigaWorker *worker);
 AmiChatResult AmiChat_AmigaWorkerSend(AmiChatAmigaWorker *worker,const char *prompt);
 void AmiChat_AmigaWorkerCancel(AmiChatAmigaWorker *worker);
 int AmiChat_AmigaWorkerBusy(const AmiChatAmigaWorker *worker);
+AmiChatWorkerState AmiChat_AmigaWorkerState(const AmiChatAmigaWorker *worker);
 unsigned long AmiChat_AmigaWorkerSignalMask(const AmiChatAmigaWorker *worker);
 int AmiChat_AmigaWorkerDrain(AmiChatAmigaWorker *worker,AmiChatWorkerEventFn callback,void *userdata);
 #ifdef __cplusplus
