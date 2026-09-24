@@ -1,0 +1,9 @@
+# Native transcript renderer
+
+The first transcript renderer draws directly into the window RastPort. It performs pixel-width word wrapping using the active Amiga font, clears only the conversation region, and keeps rendering independent of provider/session logic.
+
+The renderer is deliberately small and native. It does not require MUI or a browser engine.
+
+This first pass establishes redraw and wrapping. Scrolling state exists but will be refined together with scrollbar/keyboard input; the current implementation should not yet be considered the final scroll model.
+
+The next pass connects redraw to refresh/resize and streamed chunk events, then adds proper viewport line calculation so auto-follow and manual scrollback coexist.
