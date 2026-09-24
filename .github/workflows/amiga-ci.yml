@@ -1,0 +1,17 @@
+name: amiga-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  amiga:
+    uses: Ploos-AS/amiga-dev/.github/workflows/reusable-amiga-dev.yml@main
+    with:
+      image: ghcr.io/ploos-as/amiga-dev:edge
+      command: make amiga-compile
