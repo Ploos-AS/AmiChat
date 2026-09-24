@@ -34,6 +34,8 @@ int main(void)
     request.url = "https://example.invalid/";
     request.headers = 0;
     request.body = 0;
+    request.body_callback = 0;
+    request.body_userdata = 0;
 
     assert(AmiChat_TransportRequest(&transport, &request, &response) == AMICHAT_OK);
     assert(response.status_code == 200);
