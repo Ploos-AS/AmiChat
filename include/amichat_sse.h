@@ -1,5 +1,6 @@
 #ifndef AMICHAT_SSE_H
 #define AMICHAT_SSE_H
+#include <stddef.h>
 #include "amichat.h"
 #include "amichat_stream.h"
 #ifdef __cplusplus
