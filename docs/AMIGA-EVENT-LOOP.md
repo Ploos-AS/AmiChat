@@ -12,3 +12,8 @@ This design keeps the native GUI responsive while preserving ordinary Amiga mess
 ## Integrated loop
 
 The application now waits on the GUI UserPort and worker event port together with Ctrl-C, drains worker stream events on the application task, and routes Send/Stop through the asynchronous worker bridge. ARexx dispatch remains serviced from the same application loop. The next presentation-layer step will render worker chunks instead of discarding them.
+
+
+## Generation state UI
+
+The GadTools window now exposes the shared generation state in a native text gadget. Send is disabled while generation is active or cancellation is pending; Stop is enabled only while actively generating. Worker completion, cancellation, and errors resynchronize the controls with the shared worker state.
