@@ -1,0 +1,5 @@
+#include "amichat_arexx.h"
+#include <assert.h>
+#include <string.h>
+static AmiChatResult fake(AmiChatTransport*t,const AmiChatTransportRequest*q,AmiChatTransportResponse*p){(void)t;(void)q;p->status_code=200;p->body="{\"choices\":[{\"message\":{\"content\":\"Reply\"}}]}";p->content_type="application/json";return AMICHAT_OK;}
+int main(void){static const AmiChatTransportOps ops={fake,0};AmiChatTransport t;AmiChatSession*s;AmiChatARexxResult r;t.ops=&ops;t.userdata=0;s=AmiChat_SessionCreate(&t);assert(s);assert(AmiChat_ARexxDispatch(s,"PROVIDER openrouter",&r)==AMICHAT_OK);assert(strcmp(r.result,"openrouter")==0);assert(AmiChat_ARexxDispatch(s,"MODEL test-model",&r)==AMICHAT_OK);assert(AmiChat_ARexxDispatch(s,"APPLY",&r)==AMICHAT_OK);assert(AmiChat_ARexxDispatch(s,"SEND Hello from ARexx",&r)==AMICHAT_OK);assert(AmiChat_ARexxDispatch(s,"STATUS",&r)==AMICHAT_OK);assert(strstr(r.result,"MESSAGES=2")!=0);assert(AmiChat_ARexxDispatch(s,"NEW",&r)==AMICHAT_OK);assert(AmiChat_ARexxDispatch(s,"STATUS",&r)==AMICHAT_OK);assert(strstr(r.result,"MESSAGES=0")!=0);AmiChat_SessionDestroy(s);return 0;}
