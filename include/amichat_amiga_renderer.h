@@ -12,6 +12,10 @@ void AmiChat_AmigaRendererDraw(AmiChatAmigaRenderer *renderer,void *window);
 void AmiChat_AmigaRendererScroll(AmiChatAmigaRenderer *renderer,int lines);
 void AmiChat_AmigaRendererFollow(AmiChatAmigaRenderer *renderer,int enabled);
 int AmiChat_AmigaRendererFollowing(const AmiChatAmigaRenderer *renderer);
+unsigned long AmiChat_AmigaRendererTotalLines(AmiChatAmigaRenderer *renderer,void *window);
+unsigned long AmiChat_AmigaRendererVisibleLines(AmiChatAmigaRenderer *renderer,void *window);
+unsigned long AmiChat_AmigaRendererTopLine(const AmiChatAmigaRenderer *renderer);
+void AmiChat_AmigaRendererSetTopLine(AmiChatAmigaRenderer *renderer,unsigned long line);
 #ifdef __cplusplus
 }
 #endif
