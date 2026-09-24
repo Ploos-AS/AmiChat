@@ -12,3 +12,8 @@ The GUI event loop should poll the ARexx port alongside Intuition and applicatio
 ## GUI synchronization
 
 The ARexx public port signal is now part of the application's Wait() mask. After an ARexx command is dispatched, the native GUI rebuilds its presentation transcript from the shared session conversation. Commands such as NEW therefore become visible immediately without requiring unrelated GUI activity to wake the application task.
+
+
+## Asynchronous generation
+
+Native ARexx SEND now queues generation through the same Amiga worker used by the GUI and returns `QUEUED` immediately. STOP requests cancellation through that shared worker. A second SEND while generation is active returns a busy error instead of starting concurrent mutation of the session conversation.
