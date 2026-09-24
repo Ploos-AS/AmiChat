@@ -9,6 +9,7 @@ extern "C" {
 typedef struct AmiChatOpenAICompatConfig { const char *base_url; const char *api_key; const char *organization; } AmiChatOpenAICompatConfig;
 AmiChatResult AmiChat_OpenAICompat_Init(AmiChatProvider *,AmiChatTransport *,const AmiChatOpenAICompatConfig *);
 AmiChatResult AmiChat_OpenAICompat_Chat(AmiChatProvider *,const AmiChatRequest *,AmiChatStream *);
+AmiChatResult AmiChat_OpenAICompat_Conversation(AmiChatProvider *,const char *,const AmiChatConversation *,AmiChatStream *);
 #ifdef __cplusplus
 }
 #endif
