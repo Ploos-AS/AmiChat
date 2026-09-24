@@ -1,5 +1,6 @@
 #ifndef AMICHAT_TRANSCRIPT_H
 #define AMICHAT_TRANSCRIPT_H
+#include <stddef.h>
 #include "amichat.h"
 #include "amichat_message.h"
 #ifdef __cplusplus
