@@ -22,3 +22,6 @@ Native ARexx SEND now queues generation through the same Amiga worker used by th
 ## Generation state
 
 `BUSY` returns `1` while the shared generation worker is active and `0` when idle. Cancellation is represented by the dedicated `AMICHAT_WORKER_CANCELLED` event rather than a generic worker error, allowing native UI and automation layers to distinguish an intentional STOP from provider/network failure.
+
+
+`GENSTATE` returns the shared generation state name: `IDLE`, `GENERATING`, `CANCELLING`, `CANCELLED`, or `ERROR`. `BUSY` remains as a compact compatibility query.
