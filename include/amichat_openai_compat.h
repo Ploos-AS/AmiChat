@@ -1,6 +1,7 @@
 #ifndef AMICHAT_OPENAI_COMPAT_H
 #define AMICHAT_OPENAI_COMPAT_H
 #include "amichat.h"
+#include "amichat_provider.h"
 #include "amichat_transport.h"
 #include "amichat_request.h"
 #ifdef __cplusplus
