@@ -1,5 +1,6 @@
 #ifndef AMICHAT_JSON_H
 #define AMICHAT_JSON_H
+#include <stddef.h>
 #include "amichat.h"
 #ifdef __cplusplus
 extern "C" {
