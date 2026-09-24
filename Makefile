@@ -27,7 +27,7 @@ libamichat.a: $(CORE_OBJS)
 test: $(TESTS)
 	@set -e; for t in $(TESTS); do echo "==> $$t"; ./$$t; done
 
-test_core: src/amichat.c test/test_core.c
+test_core: src/amichat.c src/amichat_message.c test/test_core.c
 	$(CC) $(CFLAGS) $^ -o $@
 test_transport: src/amichat_transport.c test/test_transport.c
 	$(CC) $(CFLAGS) $^ -o $@
