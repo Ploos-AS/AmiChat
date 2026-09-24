@@ -8,6 +8,7 @@ typedef struct AmiChatARexxPort AmiChatARexxPort;
 AmiChatARexxPort *AmiChat_ARexxPortOpen(AmiChatSession *session);
 void AmiChat_ARexxPortClose(AmiChatARexxPort *port);
 int AmiChat_ARexxPortPoll(AmiChatARexxPort *port);
+unsigned long AmiChat_ARexxPortSignalMask(const AmiChatARexxPort *port);
 #ifdef __cplusplus
 }
 #endif
