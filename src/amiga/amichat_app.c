@@ -7,7 +7,7 @@
 #include <proto/exec.h>
 #include <stdlib.h>
 struct AmiChatAmigaApp { AmiChatSession *session; AmiChatARexxPort *arexx; AmiChatAmigaWorker *worker; AmiChatAmigaGUI *gui; int quit; };
-static void worker_event(const AmiChatWorkerEvent*e,void*u){(void)e;(void)u;/* presentation layer consumes chunks next */ }
+static void worker_event(const AmiChatWorkerEvent*e,void*u){AmiChatAmigaApp*a=(AmiChatAmigaApp*)u;if(a&&a->gui)AmiChat_AmigaGUIWorkerEvent(a->gui,e);}
 AmiChatAmigaApp *AmiChat_AmigaAppCreate(AmiChatSession*s){AmiChatAmigaApp*a;if(!s)return 0;a=(AmiChatAmigaApp*)calloc(1,sizeof(*a));if(!a)return 0;a->session=s;a->arexx=AmiChat_ARexxPortOpen(s);a->worker=AmiChat_AmigaWorkerCreate(s);if(a->worker)a->gui=AmiChat_AmigaGUIOpen(s,a->worker);if(!a->arexx||!a->worker||!a->gui){AmiChat_AmigaAppDestroy(a);return 0;}return a;}
 void AmiChat_AmigaAppDestroy(AmiChatAmigaApp*a){if(!a)return;AmiChat_AmigaGUIClose(a->gui);AmiChat_AmigaWorkerDestroy(a->worker);AmiChat_ARexxPortClose(a->arexx);free(a);}
 void AmiChat_AmigaAppRequestQuit(AmiChatAmigaApp*a){if(a)a->quit=1;}
