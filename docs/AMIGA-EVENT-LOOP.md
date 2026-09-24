@@ -7,3 +7,8 @@ The application object owns platform integration around the shared `AmiChatSessi
 The next GUI layer must expose its UserPort signal mask to this loop. Streaming network work should not perform long blocking operations on the UI task; completion/chunk delivery will be signalled back to the application task.
 
 This design keeps the native GUI responsive while preserving ordinary Amiga message-port semantics.
+
+
+## Integrated loop
+
+The application now waits on the GUI UserPort and worker event port together with Ctrl-C, drains worker stream events on the application task, and routes Send/Stop through the asynchronous worker bridge. ARexx dispatch remains serviced from the same application loop. The next presentation-layer step will render worker chunks instead of discarding them.
