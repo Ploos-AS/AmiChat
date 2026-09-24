@@ -12,6 +12,7 @@ void AmiChat_AmigaGUIClose(AmiChatAmigaGUI *gui);
 unsigned long AmiChat_AmigaGUISignalMask(const AmiChatAmigaGUI *gui);
 int AmiChat_AmigaGUIHandle(AmiChatAmigaGUI *gui);
 void AmiChat_AmigaGUIWorkerEvent(AmiChatAmigaGUI *gui,const AmiChatWorkerEvent *event);
+void AmiChat_AmigaGUIRefreshConversation(AmiChatAmigaGUI *gui);
 #ifdef __cplusplus
 }
 #endif
