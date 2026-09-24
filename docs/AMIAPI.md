@@ -17,4 +17,6 @@ The adapter intentionally keeps AmiAPI behind the AmiChat transport boundary so 
 
 ## Streaming
 
-AmiAPI 0.1.2 exposes AmiAPI_RequestSetResponseCallback(), which is the correct integration point for AmiChat's incremental SSE parser. The next increment extends the AmiChat transport contract with a streaming body callback rather than buffering the complete response.
+AmiAPI 0.1.2 exposes AmiAPI_RequestSetResponseCallback(), which is the correct integration point for AmiChat's incremental SSE parser. The transport contract now supports an incremental body callback. AmiAPI_RequestSetResponseCallback() feeds chunks directly through that callback, and callback errors propagate back through AmiChat so cancellation or parser failures can stop the request cooperatively.
+
+The next increment connects the OpenAI-compatible adapter's SSE parser directly to this streaming transport path.
