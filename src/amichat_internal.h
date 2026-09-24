@@ -1,5 +1,6 @@
 #ifndef AMICHAT_INTERNAL_H
 #define AMICHAT_INTERNAL_H
+#include <stddef.h>
 #include "amichat.h"
 #include "amichat_message.h"
 struct AmiChatMessage { AmiChatRole role; char *content; struct AmiChatMessage *next; };
