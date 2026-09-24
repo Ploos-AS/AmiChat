@@ -12,7 +12,7 @@ CORE_OBJS = $(CORE_SRCS:src/%.c=%.o)
 TESTS = test_core test_transport test_json test_stream test_request test_sse \
 	test_openai_stream test_conversation test_openai_history test_reply_capture \
 	test_registry test_provider_factory test_config test_session test_arexx \
-	test_worker test_transcript
+	test_worker test_worker_cancel test_transcript
 
 .PHONY: all test clean
 
@@ -58,6 +58,8 @@ test_session: src/amichat_session.c src/amichat_provider_factory.c src/amichat_r
 test_arexx: src/amichat_arexx.c src/amichat_session.c src/amichat_provider_factory.c src/amichat_registry.c src/amichat_openai_compat.c src/amichat_config.c src/amichat.c src/amichat_message.c src/amichat_transport.c src/amichat_request.c src/amichat_sse.c src/amichat_stream.c src/amichat_json.c test/test_arexx.c
 	$(CC) $(CFLAGS) $^ -o $@
 test_worker: src/amichat_worker.c src/amichat_session.c src/amichat_provider_factory.c src/amichat_registry.c src/amichat_openai_compat.c src/amichat_config.c src/amichat.c src/amichat_message.c src/amichat_transport.c src/amichat_request.c src/amichat_sse.c src/amichat_stream.c src/amichat_json.c test/test_worker.c
+	$(CC) $(CFLAGS) $^ -o $@
+test_worker_cancel: src/amichat_worker.c src/amichat_session.c src/amichat_provider_factory.c src/amichat_registry.c src/amichat_openai_compat.c src/amichat_config.c src/amichat.c src/amichat_message.c src/amichat_transport.c src/amichat_request.c src/amichat_sse.c src/amichat_stream.c src/amichat_json.c test/test_worker_cancel.c
 	$(CC) $(CFLAGS) $^ -o $@
 test_transcript: src/amichat_transcript.c src/amichat.c src/amichat_message.c test/test_transcript.c
 	$(CC) $(CFLAGS) $^ -o $@
