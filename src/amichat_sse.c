@@ -50,7 +50,7 @@ AmiChatResult AmiChat_SSEFeed(AmiChatSSEParser *p, const char *d, size_t n)
             continue;
         }
         end = i;
-        line = consumed;
+        line = 0;
         while (line < end) {
             size_t e = line;
             while (e < end && p->buffer[e] != '\n')
