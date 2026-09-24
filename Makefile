@@ -14,7 +14,7 @@ TESTS = test_core test_transport test_json test_stream test_request test_sse \
 	test_registry test_provider_factory test_config test_session test_arexx \
 	test_worker test_worker_cancel test_transcript
 
-.PHONY: all test clean
+.PHONY: all test amiga-compile clean
 
 all: libamichat.a
 
@@ -63,6 +63,13 @@ test_worker_cancel: src/amichat_worker.c src/amichat_session.c src/amichat_provi
 	$(CC) $(CFLAGS) $^ -o $@
 test_transcript: src/amichat_transcript.c src/amichat.c src/amichat_message.c test/test_transcript.c
 	$(CC) $(CFLAGS) $^ -o $@
+
+amiga-compile:
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_worker_port.c -o /tmp/amichat_worker_port.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_arexx_port.c -o /tmp/amichat_arexx_port.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_renderer.c -o /tmp/amichat_renderer.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_gui.c -o /tmp/amichat_gui.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_app.c -o /tmp/amichat_app.o
 
 clean:
 	rm -f $(CORE_OBJS) libamichat.a $(TESTS) test-config.tmp
