@@ -71,6 +71,7 @@ AmiChatResult AmiChat_AmigaWorkerSend(AmiChatAmigaWorker*w,const char*p){
 }
 
 void AmiChat_AmigaWorkerCancel(AmiChatAmigaWorker*w){if(!w)return;w->cancel=1;if(w->core)AmiChat_WorkerCancel(w->core);}
+int AmiChat_AmigaWorkerBusy(const AmiChatAmigaWorker*w){return w?w->busy:0;}
 unsigned long AmiChat_AmigaWorkerSignalMask(const AmiChatAmigaWorker*w){return(w&&w->events)?(1UL<<w->events->mp_SigBit):0;}
 int AmiChat_AmigaWorkerDrain(AmiChatAmigaWorker*w,AmiChatWorkerEventFn cb,void*u){WorkerMsg*m;AmiChatWorkerEvent e;int n=0;if(!w)return 0;while((m=(WorkerMsg*)GetMsg(w->events))!=0){n++;e.type=m->type;e.data=m->size?m->data:0;e.size=m->size;e.result=m->result;if(cb)cb(&e,u);FreeMem(m,m->msg.mn_Length);}return n;}
 #else
@@ -79,6 +80,7 @@ AmiChatAmigaWorker *AmiChat_AmigaWorkerCreate(AmiChatSession*s){(void)s;return 0
 void AmiChat_AmigaWorkerDestroy(AmiChatAmigaWorker*w){(void)w;}
 AmiChatResult AmiChat_AmigaWorkerSend(AmiChatAmigaWorker*w,const char*p){(void)w;(void)p;return AMICHAT_ERR_UNSUPPORTED;}
 void AmiChat_AmigaWorkerCancel(AmiChatAmigaWorker*w){(void)w;}
+int AmiChat_AmigaWorkerBusy(const AmiChatAmigaWorker*w){(void)w;return 0;}
 unsigned long AmiChat_AmigaWorkerSignalMask(const AmiChatAmigaWorker*w){(void)w;return 0;}
 int AmiChat_AmigaWorkerDrain(AmiChatAmigaWorker*w,AmiChatWorkerEventFn cb,void*u){(void)w;(void)cb;(void)u;return 0;}
 #endif
