@@ -1,0 +1,6 @@
+#include "amichat_session.h"
+#include "amichat_message.h"
+#include <assert.h>
+#include <string.h>
+static AmiChatResult fake(AmiChatTransport*t,const AmiChatTransportRequest*r,AmiChatTransportResponse*p){(void)t;assert(strstr(r->body,"Hello")!=0);p->status_code=200;p->body="{\"choices\":[{\"message\":{\"content\":\"Hi from model\"}}]}";p->content_type="application/json";return AMICHAT_OK;}
+int main(void){static const AmiChatTransportOps ops={fake,0};AmiChatTransport t;AmiChatSession*s;AmiChatConfig*c;const AmiChatMessage*m;t.ops=&ops;t.userdata=0;s=AmiChat_SessionCreate(&t);assert(s);c=AmiChat_SessionConfig(s);assert(AmiChat_ConfigSetProvider(c,"openrouter")==AMICHAT_OK);assert(AmiChat_ConfigSetModel(c,"test-model")==AMICHAT_OK);assert(AmiChat_ConfigSetAPIKey(c,"secret")==AMICHAT_OK);assert(AmiChat_SessionApplyConfig(s)==AMICHAT_OK);assert(AmiChat_SessionSend(s,"Hello",0)==AMICHAT_OK);assert(AmiChat_ConversationMessageCount(AmiChat_SessionConversation(s))==2);m=AmiChat_ConversationMessageAt(AmiChat_SessionConversation(s),1);assert(AmiChat_MessageRole(m)==AMICHAT_ROLE_ASSISTANT);assert(strcmp(AmiChat_MessageContent(m),"Hi from model")==0);assert(AmiChat_SessionNewConversation(s)==AMICHAT_OK);assert(AmiChat_ConversationMessageCount(AmiChat_SessionConversation(s))==0);AmiChat_SessionDestroy(s);return 0;}
