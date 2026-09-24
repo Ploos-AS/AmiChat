@@ -1,0 +1,4 @@
+#include "amichat_provider_factory.h"
+#include <assert.h>
+static AmiChatResult fake(AmiChatTransport*t,const AmiChatTransportRequest*r,AmiChatTransportResponse*p){(void)t;(void)r;(void)p;return AMICHAT_OK;}
+int main(void){static const AmiChatTransportOps ops={fake,0};AmiChatTransport t;AmiChatProvider p;AmiChatProviderConfig c;t.ops=&ops;t.userdata=0;c.provider_id="openrouter";c.api_key="x";c.endpoint=0;c.organization=0;assert(AmiChat_ProviderCreate(&p,&t,&c)==AMICHAT_OK);assert(p.ops!=0);AmiChat_ProviderDestroy(&p);c.provider_id="anthropic";assert(AmiChat_ProviderCreate(&p,&t,&c)==AMICHAT_ERR_UNSUPPORTED);c.provider_id="custom";c.endpoint=0;assert(AmiChat_ProviderCreate(&p,&t,&c)==AMICHAT_ERR_INVALID_ARGUMENT);c.endpoint="http://localhost:1234/v1/chat/completions";assert(AmiChat_ProviderCreate(&p,&t,&c)==AMICHAT_OK);AmiChat_ProviderDestroy(&p);return 0;}
