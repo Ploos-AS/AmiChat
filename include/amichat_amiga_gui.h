@@ -2,6 +2,7 @@
 #define AMICHAT_AMIGA_GUI_H
 #include "amichat_session.h"
 #include "amichat_worker_amiga.h"
+#include "amichat_worker.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,6 +11,7 @@ AmiChatAmigaGUI *AmiChat_AmigaGUIOpen(AmiChatSession *session,AmiChatAmigaWorker
 void AmiChat_AmigaGUIClose(AmiChatAmigaGUI *gui);
 unsigned long AmiChat_AmigaGUISignalMask(const AmiChatAmigaGUI *gui);
 int AmiChat_AmigaGUIHandle(AmiChatAmigaGUI *gui);
+void AmiChat_AmigaGUIWorkerEvent(AmiChatAmigaGUI *gui,const AmiChatWorkerEvent *event);
 #ifdef __cplusplus
 }
 #endif
