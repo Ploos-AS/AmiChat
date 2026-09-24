@@ -15,3 +15,5 @@ Commands must be scriptable without GUI interaction. Return codes distinguish sy
 ## M1 dispatcher
 
 The portable dispatcher now implements `NEW`, `PROVIDER`, `MODEL`, `APPLY`, `SEND` and `STATUS`. It is intentionally independent of Amiga message-port plumbing so the command semantics are host-testable. The native Amiga layer will expose this dispatcher through the `AMICHAT` public ARexx port.
+
+Additional runtime commands: `ENDPOINT [url]`, `SETKEY value`, `HISTORY`, and `GETMESSAGE index`. `SETKEY` deliberately returns only `OK`; credentials are never returned through the ARexx result string.
