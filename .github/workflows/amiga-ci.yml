@@ -14,4 +14,4 @@ jobs:
     uses: Ploos-AS/amiga-dev/.github/workflows/reusable-amiga-dev.yml@main
     with:
       image: ghcr.io/ploos-as/amiga-dev:edge
-      command: make amiga-link
+      command: git clone --depth 1 https://github.com/pgousdal/AmiAPI.git /tmp/AmiAPI && make -C /tmp/AmiAPI PLATFORM=amiga CFLAGS='-Os -Wall -Wextra -m68000' build/libamiapi.a && make amiga-link AMIAPI_DIR=/tmp/AmiAPI
