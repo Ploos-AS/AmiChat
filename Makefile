@@ -76,10 +76,11 @@ clean:
 	rm -f $(CORE_OBJS) libamichat.a $(TESTS) test-config.tmp
 
 AMIGA_CC = m68k-amigaos-gcc
-AMIGA_CFLAGS = -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__
+AMIAPI_DIR ?= ../AmiAPI
+AMIGA_CFLAGS = -m68000 -Os -Wall -Wextra -Werror -Iinclude -I$(AMIAPI_DIR)/include -D__AMIGA__
 AMIGA_CORE_OBJS = $(CORE_SRCS:src/%.c=/tmp/amichat-%.o)
 
 amiga-link: amiga-compile
 	@set -e; for s in $(CORE_SRCS); do b=$$(basename $$s .c); $(AMIGA_CC) $(AMIGA_CFLAGS) -c $$s -o /tmp/amichat-$$b.o; done
 	$(AMIGA_CC) $(AMIGA_CFLAGS) -c src/amichat_transport_amiapi.c -o /tmp/amichat_transport_amiapi.o
-	$(AMIGA_CC) -m68000 -o /tmp/AmiChat $(AMIGA_CORE_OBJS) /tmp/amichat_transport_amiapi.o /tmp/amichat_worker_port.o /tmp/amichat_arexx_port.o /tmp/amichat_renderer.o /tmp/amichat_gui.o /tmp/amichat_app.o /tmp/amichat_main.o -lamiapi
+	$(AMIGA_CC) -m68000 -o /tmp/AmiChat $(AMIGA_CORE_OBJS) /tmp/amichat_transport_amiapi.o /tmp/amichat_worker_port.o /tmp/amichat_arexx_port.o /tmp/amichat_renderer.o /tmp/amichat_gui.o /tmp/amichat_app.o /tmp/amichat_main.o $(AMIAPI_DIR)/build/libamiapi.a
