@@ -65,11 +65,11 @@ test_transcript: src/amichat_transcript.c src/amichat.c src/amichat_message.c te
 	$(CC) $(CFLAGS) $^ -o $@
 
 amiga-compile:
-	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_worker_port.c -o /tmp/amichat_worker_port.o
-	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_arexx_port.c -o /tmp/amichat_arexx_port.o
-	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_renderer.c -o /tmp/amichat_renderer.o
-	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_gui.c -o /tmp/amichat_gui.o
-	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Iinclude -D__AMIGA__ -c src/amiga/amichat_app.c -o /tmp/amichat_app.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__ -c src/amiga/amichat_worker_port.c -o /tmp/amichat_worker_port.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__ -c src/amiga/amichat_arexx_port.c -o /tmp/amichat_arexx_port.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__ -c src/amiga/amichat_renderer.c -o /tmp/amichat_renderer.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__ -c src/amiga/amichat_gui.c -o /tmp/amichat_gui.o
+	m68k-amigaos-gcc -m68000 -Os -Wall -Wextra -Werror -Iinclude -D__AMIGA__ -c src/amiga/amichat_app.c -o /tmp/amichat_app.o
 
 clean:
 	rm -f $(CORE_OBJS) libamichat.a $(TESTS) test-config.tmp
