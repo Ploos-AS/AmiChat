@@ -14,4 +14,4 @@ jobs:
     uses: Ploos-AS/amiga-dev/.github/workflows/reusable-amiga-dev.yml@main
     with:
       image: ghcr.io/ploos-as/amiga-dev:edge
-      command: make amiga-compile
+      command: make amiga-link
