@@ -5,6 +5,8 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Re-run marker: qualified amiga-dev edge includes AmiSSL 5.27 SDK.
+
 permissions:
   contents: read
   packages: read
